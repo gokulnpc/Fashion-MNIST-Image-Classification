@@ -2,19 +2,20 @@ import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow import keras
+from PIL import Image
+import numpy as np
 
 loaded_model = load_model('fashion_mnist_model.h5')
 
 def process_image(image):
-    # with keras
-    img = keras.preprocessing.image.load_img(image, target_size=(28, 28))
-    img = keras.preprocessing.image.img_to_array(img)
-    img = tf.image.resize(img, [28, 28])
-    img = img / 255.0
-    img = tf.expand_dims(img, axis=0)
-    
-    
-    return img
+    # with PIL
+    img = Image.open(image)
+    img = img.resize((28, 28))
+    img = img.convert('L') # grayscale
+    img_array = np.array(img) / 255.0
+    img_array = img_array.reshape((1, 28, 28, 1))
+    return img_array
+
 
 # Sidebar for navigation
 st.sidebar.title('Navigation')
@@ -22,7 +23,7 @@ options = st.sidebar.selectbox('Select a page:',
                            ['Prediction', 'Code', 'About'])
 
 if options == 'Prediction': # Prediction page
-    st.title('Face Mask Detection')
+    st.title('Fashion MNIST Image Classification using CNN')
 
     class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 
@@ -30,11 +31,11 @@ if options == 'Prediction': # Prediction page
     image = st.file_uploader('Upload an image:', type=['jpg', 'jpeg', 'png'])
     if image is not None:
         st.image(image, caption='Uploaded Image', use_column_width=True)
-    if st.button('Predict'):
+    if st.button('Classify Image'):
         with st.spinner('Model working....'):
             img_array = process_image(image)
             prediction = loaded_model.predict(img_array).argmax()
-            st.write(f'Prediction: {class_names[prediction]}')
+            st.success(f'Prediction: {class_names[prediction]}')
             
 elif options == 'Code':
     st.header('Code')
@@ -72,7 +73,7 @@ elif options == 'About':
     st.write('10. Ankle boot')
     st.write('--'*50)
     st.write('The web app is open-source. You can view the code and the dataset used in this web app from the GitHub repository:')
-    st.write('[GitHub Repository](https://github.com/gokulnpc/Face-Mask-Detection-CNN)')
+    st.write('[GitHub Repository](https://github.com/gokulnpc/Fashion-MNIST-Image-Classification)')
     st.write('--'*50)
 
     st.header('Contact')
