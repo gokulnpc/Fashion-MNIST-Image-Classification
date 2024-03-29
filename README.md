@@ -13,3 +13,11 @@ The model is trained to classify images into 10 different classes of clothing:
 8. Sneaker
 9. Bag
 10. Ankle boot
+
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+![alt text](image-3.png)
